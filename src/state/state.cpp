@@ -16,8 +16,8 @@ int State::evaluate(){
   int fin_value;
   int self_value = 0;
   int oppn_value = 0;
-  auto self_board = this->board.board[this->player];
-  auto oppn_board = this->board.board[1 - this->player];
+  auto self_board = this->board.board[0];
+  auto oppn_board = this->board.board[1];
 
   for (int i = 0; i < BOARD_H; i += 1){
     for(int j = 0; j < BOARD_W; j += 1) {
@@ -45,6 +45,7 @@ int State::evaluate(){
       }
     }
   }
+  
   fin_value = self_value - oppn_value;
   return fin_value;
 }
@@ -59,8 +60,6 @@ int State::evaluate(){
 State* State::next_state(Move move){
   Board next = this->board;
   Point from = move.first, to = move.second;
-  //this->value = this->evaluate();
-  //std::cout << this->value << "\n";
   int8_t moved = next.board[this->player][from.first][from.second];
   //promotion for pawn
   if(moved == 1 && (to.first==BOARD_H-1 || to.first==0)){
@@ -241,9 +240,7 @@ void State::get_legal_actions(){
       }
     }
   }
-  std::cout << "\n";
-  //this->value = this->evaluate();
-  //std::cout << this->value << "\n";
+  //std::cout << "\n";
   this->legal_actions = all_actions;
 }
 
