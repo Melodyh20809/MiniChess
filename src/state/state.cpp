@@ -13,7 +13,40 @@
  */
 int State::evaluate(){
   // [TODO] design your own evaluation function
-  return 0;
+  int fin_value;
+  int self_value = 0;
+  int oppn_value = 0;
+  auto self_board = this->board.board[this->player];
+  auto oppn_board = this->board.board[1 - this->player];
+
+  for (int i = 0; i < BOARD_H; i += 1){
+    for(int j = 0; j < BOARD_W; j += 1) {
+      int now_piece = self_board[i][j];     
+      switch(now_piece) {
+        case 1: self_value += 2; break;
+        case 2: self_value += 6; break;
+        case 3: self_value += 7; break;
+        case 4: self_value += 8; break;
+        case 5: self_value += 20; break;
+        case 6: self_value += 100; break;
+      }
+    }
+  }
+  for (int i = 0; i < BOARD_H; i += 1){
+    for(int j = 0; j < BOARD_W; j += 1) {
+      int now_piece = oppn_board[i][j];     
+      switch(now_piece) {
+        case 1: oppn_value += 2; break;
+        case 2: oppn_value += 6; break;
+        case 3: oppn_value += 7; break;
+        case 4: oppn_value += 8; break;
+        case 5: oppn_value += 20; break;
+        case 6: oppn_value += 100; break;
+      }
+    }
+  }
+  fin_value = self_value - oppn_value;
+  return fin_value;
 }
 
 
@@ -26,7 +59,8 @@ int State::evaluate(){
 State* State::next_state(Move move){
   Board next = this->board;
   Point from = move.first, to = move.second;
-  
+  //this->value = this->evaluate();
+  //std::cout << this->value << "\n";
   int8_t moved = next.board[this->player][from.first][from.second];
   //promotion for pawn
   if(moved == 1 && (to.first==BOARD_H-1 || to.first==0)){
@@ -208,6 +242,8 @@ void State::get_legal_actions(){
     }
   }
   std::cout << "\n";
+  //this->value = this->evaluate();
+  //std::cout << this->value << "\n";
   this->legal_actions = all_actions;
 }
 
