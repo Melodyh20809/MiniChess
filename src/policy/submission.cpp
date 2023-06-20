@@ -1,7 +1,9 @@
 #include <cstdlib>
 
+#include <limits.h>
+
 #include "../state/state.hpp"
-#include "./minimax.hpp"
+#include "./submission.hpp"
 
 
 /**
@@ -11,61 +13,59 @@
  * @param depth You may need this for other policy
  * @return Move 
  */
-int player = 0;
 
 // if minmax = 1 -> want max;
 // if minmax = 0 -> want min;
 
-int Minimax::minimax_value(int depth, State* state, int minmax) {
+int player = 0;
+
+int Submission::alphabeta_value(int depth, State* state, int minmax, int a, int b) {
     int next_value, value;
-    if (depth <= 0 || !state->legal_actions.size() ) {
-        
+    if (depth <= 0) {
         value = state->evaluate(player);
         return value;
     }
-    if (minmax == 1) {   // max
-        value = -1000;
+    
+    else if (minmax) {   // max
+        value = INT_MIN;
+        state->get_legal_actions();
         for (auto it : state->legal_actions) {
             State* nextstate = state->next_state(it);
-            nextstate->get_legal_actions();
-            
-            next_value = minimax_value(depth - 1, nextstate, 0);
-            if (next_value > value) {
-                value = next_value;
-            }
+            next_value = alphabeta_value(depth - 1, nextstate, 0, a, b);
+            value = std::max(value, next_value);
+            a = std::max(a, value);
+            if (a >= b) break;
         }
         return value;
     }
     else {   // min
-        value = 1000;
+        value = INT_MAX;
+        state->get_legal_actions();
         for (auto it : state->legal_actions) {
             State* nextstate = state->next_state(it);
-            nextstate->get_legal_actions();
-            next_value = minimax_value(depth - 1, nextstate, 1);
-            if (next_value < value) {
-                value = next_value;
-            }
+            next_value = alphabeta_value(depth - 1, nextstate, 1, a, b);
+            value = std::min(value, next_value);
+            b = std::min(b, value);
+            if (b <= a) break;
         }
         return value;
     }
     
-
 }   
 
-
-
-Move Minimax::get_move(State *state, int depth){
+Move Submission::get_move(State *state, int depth){
 
     if(!state->legal_actions.size())
         state->get_legal_actions();
     
     Move best_move;
-    int best_value = -10000, curr_value;
+    int best_value = -1000, curr_value;
+    int a = -10000, b = 10000;
+
     player = state->player;
-    
     for (auto it : state->legal_actions) {
         State* nextstate = state->next_state(it);
-        curr_value = minimax_value(depth - 1, nextstate, 0);
+        curr_value = alphabeta_value(depth -1, nextstate, 0, a, b);
         if (curr_value >= best_value) {
             best_value = curr_value;
             best_move = it;
