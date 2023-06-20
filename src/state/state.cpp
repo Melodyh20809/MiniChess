@@ -11,23 +11,23 @@
  * 
  * @return int 
  */
-int State::evaluate(){
+int State::evaluate(int player){
   // [TODO] design your own evaluation function
   int fin_value;
   int self_value = 0;
   int oppn_value = 0;
-  auto self_board = this->board.board[0];
-  auto oppn_board = this->board.board[1];
-
+  auto self_board = this->board.board[player];
+  auto oppn_board = this->board.board[1 - player];
+  
   for (int i = 0; i < BOARD_H; i += 1){
     for(int j = 0; j < BOARD_W; j += 1) {
       int now_piece = self_board[i][j];     
       switch(now_piece) {
         case 1: self_value += 2; break;
-        case 2: self_value += 6; break;
-        case 3: self_value += 7; break;
-        case 4: self_value += 8; break;
-        case 5: self_value += 20; break;
+        case 2: self_value += 5; break;
+        case 3: self_value += 6; break;
+        case 4: self_value += 7; break;
+        case 5: self_value += 8; break;
         case 6: self_value += 100; break;
       }
     }
@@ -37,15 +37,14 @@ int State::evaluate(){
       int now_piece = oppn_board[i][j];     
       switch(now_piece) {
         case 1: oppn_value += 2; break;
-        case 2: oppn_value += 6; break;
-        case 3: oppn_value += 7; break;
-        case 4: oppn_value += 8; break;
-        case 5: oppn_value += 20; break;
+        case 2: oppn_value += 5; break;
+        case 3: oppn_value += 6; break;
+        case 4: oppn_value += 7; break;
+        case 5: oppn_value += 8; break;
         case 6: oppn_value += 100; break;
       }
     }
-  }
-  
+  } 
   fin_value = self_value - oppn_value;
   return fin_value;
 }
